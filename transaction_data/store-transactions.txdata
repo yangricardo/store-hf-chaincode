@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "storeExists",
+        "transactionLabel": "A test storeExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createStore",
+        "transactionLabel": "A test createStore transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readStore",
+        "transactionLabel": "A test readStore transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateStore",
+        "transactionLabel": "A test updateStore transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteStore",
+        "transactionLabel": "A test deleteStore transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]
