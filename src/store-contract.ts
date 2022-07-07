@@ -20,6 +20,27 @@ import { Iterators } from "fabric-shim";
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
+	@Returns("any")
+	public async healthcheck(ctx: Context): Promise<any> {
+		return {
+			binding: ctx.stub.getBinding(),
+			channelId: ctx.stub.getChannelID(),
+			creator: ctx.stub.getCreator(),
+			dateTimestamp: ctx.stub.getDateTimestamp().toISOString(),
+			tx: {
+				id: ctx.stub.getTxID(),
+				timestamp: new Date(
+					ctx.stub.getTxTimestamp().seconds.toNumber()
+				).toISOString(),
+			},
+			client: {
+				id: ctx.clientIdentity.getID(),
+				mspId: ctx.clientIdentity.getMSPID(),
+			},
+		};
+	}
+
+	@Transaction(false)
 	@Returns("boolean")
 	public async storeExists(ctx: Context, storeId: string): Promise<boolean> {
 		const data: Uint8Array = await ctx.stub.getState(storeId);
