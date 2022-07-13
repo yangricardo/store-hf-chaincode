@@ -18,6 +18,22 @@ const fabric_contract_api_1 = require("fabric-contract-api");
 const utils_2 = require("./helpers/utils");
 const store_1 = require("./store");
 let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
+    async healthcheck(ctx) {
+        return {
+            binding: ctx.stub.getBinding(),
+            channelId: ctx.stub.getChannelID(),
+            creator: ctx.stub.getCreator(),
+            dateTimestamp: ctx.stub.getDateTimestamp().toISOString(),
+            tx: {
+                id: ctx.stub.getTxID(),
+                timestamp: new Date(ctx.stub.getTxTimestamp().seconds.toNumber()).toISOString(),
+            },
+            client: {
+                id: ctx.clientIdentity.getID(),
+                mspId: ctx.clientIdentity.getMSPID(),
+            },
+        };
+    }
     async storeExists(ctx, storeId) {
         const data = await ctx.stub.getState(storeId);
         return !!data && data.length > 0;
@@ -87,6 +103,13 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         return events;
     }
 };
+__decorate([
+    (0, fabric_contract_api_1.Transaction)(false),
+    (0, fabric_contract_api_1.Returns)("any"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [fabric_contract_api_1.Context]),
+    __metadata("design:returntype", Promise)
+], StoreContract.prototype, "healthcheck", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
     (0, fabric_contract_api_1.Returns)("boolean"),
