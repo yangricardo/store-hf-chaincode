@@ -11,9 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreContract = void 0;
 const utils_1 = require("./helpers/utils");
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
 const fabric_contract_api_1 = require("fabric-contract-api");
 const utils_2 = require("./helpers/utils");
 const store_1 = require("./store");
@@ -47,7 +44,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         store.value = value;
         const validated = store_1.StoreSchema.validate(store);
         if (validated.error) {
-            console.log(validated.error.details);
+            throw validated.error.details;
         }
         const buffer = (0, utils_2.toBuffer)(validated.value);
         await ctx.stub.putState(storeId, buffer);
@@ -61,7 +58,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         const data = await ctx.stub.getState(storeId);
         const validated = store_1.StoreSchema.validate((0, utils_1.fromUint8Array)(data));
         if (validated.error) {
-            console.log(validated.error.details);
+            throw validated.error.details;
         }
         return validated.value;
     }
@@ -74,7 +71,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         store.value = newValue;
         const validated = store_1.StoreSchema.validate(store);
         if (validated.error) {
-            console.log(validated.error.details);
+            throw validated.error.details;
         }
         const buffer = (0, utils_2.toBuffer)(store);
         await ctx.stub.putState(storeId, buffer);
@@ -97,10 +94,26 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         const events = [];
         let current = await historyIterator.next();
         while (!current.done) {
-            events.push(current.value);
+            const { txId, timestamp, isDelete } = current.value;
+            events.push({ txId, timestamp, isDelete });
             current = await historyIterator.next();
         }
         return events;
+    }
+    async getHistoryTransactionForKey(ctx, storeId, txId) {
+        const exists = await this.storeExists(ctx, storeId);
+        if (!exists) {
+            throw new Error(`The store ${storeId} does not exist`);
+        }
+        const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+        let current = await historyIterator.next();
+        while (!current.done) {
+            if (current.value.txId === txId) {
+                return current.value;
+            }
+            current = await historyIterator.next();
+        }
+        throw new Error(`The store ${storeId} has no given txId history`);
     }
 };
 __decorate([
@@ -152,6 +165,13 @@ __decorate([
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "getHistoryForKey", null);
+__decorate([
+    (0, fabric_contract_api_1.Transaction)(),
+    (0, fabric_contract_api_1.Returns)("Iterators.KeyModification"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [fabric_contract_api_1.Context, String, String]),
+    __metadata("design:returntype", Promise)
+], StoreContract.prototype, "getHistoryTransactionForKey", null);
 StoreContract = __decorate([
     (0, fabric_contract_api_1.Info)({
         title: "StoreContract",

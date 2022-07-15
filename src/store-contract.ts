@@ -1,8 +1,4 @@
 import { fromUint8Array } from "./helpers/utils";
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import {
 	Context,
 	Contract,
@@ -13,6 +9,7 @@ import {
 import { toBuffer } from "./helpers/utils";
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
+import { KeyModification } from "./types";
 
 @Info({
 	title: "StoreContract",
@@ -62,7 +59,7 @@ export class StoreContract extends Contract {
 		store.value = value;
 		const validated = StoreSchema.validate(store);
 		if (validated.error) {
-			console.log(validated.error.details);
+			throw validated.error.details;
 		}
 		const buffer: Buffer = toBuffer(validated.value);
 		await ctx.stub.putState(storeId, buffer);
@@ -79,7 +76,7 @@ export class StoreContract extends Contract {
 		const data: Uint8Array = await ctx.stub.getState(storeId);
 		const validated = StoreSchema.validate(fromUint8Array(data));
 		if (validated.error) {
-			console.log(validated.error.details);
+			throw validated.error.details;
 		}
 		return validated.value;
 	}
@@ -99,7 +96,7 @@ export class StoreContract extends Contract {
 		store.value = newValue;
 		const validated = StoreSchema.validate(store);
 		if (validated.error) {
-			console.log(validated.error.details);
+			throw validated.error.details;
 		}
 		const buffer: Buffer = toBuffer(store);
 		await ctx.stub.putState(storeId, buffer);
@@ -122,18 +119,41 @@ export class StoreContract extends Contract {
 	public async getHistoryForKey(
 		ctx: Context,
 		storeId: string
-	): Promise<Iterators.KeyModification[]> {
+	): Promise<KeyModification[]> {
 		const exists: boolean = await this.storeExists(ctx, storeId);
 		if (!exists) {
 			throw new Error(`The store ${storeId} does not exist`);
 		}
 		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
-		const events: Iterators.KeyModification[] = [];
+		const events: KeyModification[] = [];
 		let current = await historyIterator.next();
 		while (!current.done) {
-			events.push(current.value);
+			const { txId, timestamp, isDelete } = current.value;
+			events.push({ txId, timestamp, isDelete });
 			current = await historyIterator.next();
 		}
 		return events;
+	}
+
+	@Transaction()
+	@Returns("Iterators.KeyModification")
+	public async getHistoryTransactionForKey(
+		ctx: Context,
+		storeId: string,
+		txId: string
+	): Promise<Iterators.KeyModification> {
+		const exists: boolean = await this.storeExists(ctx, storeId);
+		if (!exists) {
+			throw new Error(`The store ${storeId} does not exist`);
+		}
+		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+		let current = await historyIterator.next();
+		while (!current.done) {
+			if (current.value.txId === txId) {
+				return current.value;
+			}
+			current = await historyIterator.next();
+		}
+		throw new Error(`The store ${storeId} has no given txId history`);
 	}
 }
