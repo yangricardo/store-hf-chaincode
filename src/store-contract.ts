@@ -55,8 +55,9 @@ export class StoreContract extends Contract {
 		if (exists) {
 			throw new Error(`The store ${storeId} already exists`);
 		}
-		const store: Store = new Store();
-		store.value = value;
+		const store: Store = {
+			value,
+		};
 		const validated = StoreSchema.validate(store);
 		if (validated.error) {
 			throw validated.error.details;
@@ -92,8 +93,9 @@ export class StoreContract extends Contract {
 		if (!exists) {
 			throw new Error(`The store ${storeId} does not exist`);
 		}
-		const store: Store = new Store();
-		store.value = newValue;
+		const store: Store = {
+			value: newValue,
+		};
 		const validated = StoreSchema.validate(store);
 		if (validated.error) {
 			throw validated.error.details;

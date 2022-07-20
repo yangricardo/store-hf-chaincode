@@ -2,14 +2,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Object, Property } from "fabric-contract-api";
 import Joi from "joi";
 
-@Object()
-export class Store {
-	@Property()
-	public value: string;
-
+export interface Store {
+	value: string;
 	[key: string]: any;
 }
 
