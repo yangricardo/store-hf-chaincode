@@ -1,4 +1,4 @@
-import { fromUint8Array, keyHasData, saveKeyState } from "./helpers/utils";
+import { keyHasData, saveKeyState, recoverKeyState } from "./helpers/utils";
 import {
 	Context,
 	Contract,
@@ -6,7 +6,6 @@ import {
 	Returns,
 	Transaction,
 } from "fabric-contract-api";
-import { toBuffer } from "./helpers/utils";
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
@@ -57,16 +56,8 @@ export class StoreContract extends Contract {
 	@Transaction(false)
 	@Returns("Store")
 	public async readStore(ctx: Context, storeId: string): Promise<Store> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (!exists) {
-			throw new Error(`The store ${storeId} does not exist`);
-		}
-		const data: Uint8Array = await ctx.stub.getState(storeId);
-		const validated = StoreSchema.validate(fromUint8Array(data));
-		if (validated.error) {
-			throw validated.error.details;
-		}
-		return validated.value;
+		const data = await recoverKeyState<Store>(ctx, storeId);
+		return data;
 	}
 
 	@Transaction()
