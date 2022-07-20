@@ -17,7 +17,7 @@ const store_1 = require("./store");
 const healthcheck_1 = require("./helpers/healthcheck");
 let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
     async healthcheck(ctx) {
-        return new healthcheck_1.HealthcheckDTO(ctx);
+        return (0, healthcheck_1.buildHealthcheckFromContext)(ctx);
     }
     async storeExists(ctx, storeId) {
         const data = await ctx.stub.getState(storeId);
@@ -116,7 +116,6 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
 };
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
-    (0, fabric_contract_api_1.Returns)("HealthcheckDTO"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context]),
     __metadata("design:returntype", Promise)

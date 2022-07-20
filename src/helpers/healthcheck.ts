@@ -1,45 +1,39 @@
-import { Context, Object, Property } from "fabric-contract-api";
+import { Context } from "fabric-contract-api";
 
-@Object()
-export class HealthcheckDTO {
-	@Property()
-	readonly binding: string;
-	@Property()
-	readonly channelId: string;
-	@Property()
-	readonly creator: {
+export interface HealthcheckDTO {
+	binding: string;
+	channelId: string;
+	creator: {
 		mspid: string;
 		id: string;
 	};
-	@Property()
-	readonly dateTimestamp: string;
-	@Property()
-	readonly tx: {
+	dateTimestamp: string;
+	tx: {
 		id: string;
 		timestamp: string;
 	};
-	@Property()
-	readonly client: {
+	client: {
 		id: string;
 		mspId: string;
 	};
-	constructor(ctx: Context) {
-		this.binding = ctx.stub.getBinding();
-		this.channelId = ctx.stub.getChannelID();
-		this.creator = {
-			mspid: ctx.stub.getCreator().mspid,
-			id: Buffer.from(ctx.stub.getCreator().idBytes).toString("utf8"),
-		};
-		this.dateTimestamp = ctx.stub.getDateTimestamp().toISOString();
-		this.tx = {
-			id: ctx.stub.getTxID(),
-			timestamp: new Date(
-				ctx.stub.getTxTimestamp().seconds.toNumber()
-			).toISOString(),
-		};
-		this.client = {
-			id: ctx.clientIdentity.getID(),
-			mspId: ctx.clientIdentity.getMSPID(),
-		};
-	}
 }
+
+export const buildHealthcheckFromContext = (ctx: Context): HealthcheckDTO => ({
+	binding: ctx.stub.getBinding(),
+	channelId: ctx.stub.getChannelID(),
+	creator: {
+		mspid: ctx.stub.getCreator().mspid,
+		id: Buffer.from(ctx.stub.getCreator().idBytes).toString("utf8"),
+	},
+	dateTimestamp: ctx.stub.getDateTimestamp().toISOString(),
+	tx: {
+		id: ctx.stub.getTxID(),
+		timestamp: new Date(
+			ctx.stub.getTxTimestamp().seconds.toNumber()
+		).toISOString(),
+	},
+	client: {
+		id: ctx.clientIdentity.getID(),
+		mspId: ctx.clientIdentity.getMSPID(),
+	},
+});

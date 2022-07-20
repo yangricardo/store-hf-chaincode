@@ -10,7 +10,10 @@ import { toBuffer } from "./helpers/utils";
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
-import { HealthcheckDTO } from "./helpers/healthcheck";
+import {
+	HealthcheckDTO,
+	buildHealthcheckFromContext,
+} from "./helpers/healthcheck";
 
 @Info({
 	title: "StoreContract",
@@ -18,9 +21,8 @@ import { HealthcheckDTO } from "./helpers/healthcheck";
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
-	@Returns("HealthcheckDTO")
 	public async healthcheck(ctx: Context): Promise<HealthcheckDTO> {
-		return new HealthcheckDTO(ctx);
+		return buildHealthcheckFromContext(ctx);
 	}
 
 	@Transaction(false)

@@ -1,19 +1,19 @@
 import { Context } from "fabric-contract-api";
-export declare class HealthcheckDTO {
-    readonly binding: string;
-    readonly channelId: string;
-    readonly creator: {
+export interface HealthcheckDTO {
+    binding: string;
+    channelId: string;
+    creator: {
         mspid: string;
         id: string;
     };
-    readonly dateTimestamp: string;
-    readonly tx: {
+    dateTimestamp: string;
+    tx: {
         id: string;
         timestamp: string;
     };
-    readonly client: {
+    client: {
         id: string;
         mspId: string;
     };
-    constructor(ctx: Context);
 }
+export declare const buildHealthcheckFromContext: (ctx: Context) => HealthcheckDTO;
