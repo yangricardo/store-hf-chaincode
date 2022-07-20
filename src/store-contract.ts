@@ -1,4 +1,4 @@
-import { fromUint8Array } from "./helpers/utils";
+import { fromUint8Array, keyHasData } from "./helpers/utils";
 import {
 	Context,
 	Contract,
@@ -21,6 +21,7 @@ import {
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
+	@Returns("HealthcheckDTO")
 	public async healthcheck(ctx: Context): Promise<HealthcheckDTO> {
 		return buildHealthcheckFromContext(ctx);
 	}
@@ -28,8 +29,7 @@ export class StoreContract extends Contract {
 	@Transaction(false)
 	@Returns("boolean")
 	public async storeExists(ctx: Context, storeId: string): Promise<boolean> {
-		const data: Uint8Array = await ctx.stub.getState(storeId);
-		return !!data && data.length > 0;
+		return keyHasData(ctx, storeId);
 	}
 
 	@Transaction()
