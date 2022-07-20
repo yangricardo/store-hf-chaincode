@@ -12,7 +12,9 @@
 		"strict": true,
 		"strictPropertyInitialization": false,
 		"allowJs": true,
-		"alwaysStrict": true
+		"alwaysStrict": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true
 	},
 	"include": ["./src/**/*"],
 	"exclude": ["./src/**/*.spec.ts"]
