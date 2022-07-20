@@ -1,6 +1,6 @@
 {
 	"name": "store-hf-chaincode",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Simple Storage",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
@@ -21,9 +21,12 @@
 	"author": "Yang Ricardo Barcellos Miranda <yang@les.inf.puc-rio.br>",
 	"license": "Apache-2.0",
 	"dependencies": {
+		"class-transformer": "^0.5.1",
+		"es6-shim": "^0.35.6",
 		"fabric-contract-api": "^2.4.2",
 		"fabric-shim": "^2.4.2",
-		"joi": "^17.6.0"
+		"joi": "^17.6.0",
+		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.1",
