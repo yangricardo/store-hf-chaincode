@@ -3,7 +3,11 @@ import {
 	saveKeyState,
 	recoverKeyState,
 	requireKeyNotExists,
-} from "./helpers/utils";
+	buildHealthcheckFromContext,
+	HealthcheckDTO,
+	validateData,
+	requireKeyExists,
+} from "./helpers";
 import {
 	Context,
 	Contract,
@@ -14,12 +18,6 @@ import {
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
-import {
-	HealthcheckDTO,
-	buildHealthcheckFromContext,
-} from "./helpers/healthcheck";
-import { validateData } from "./helpers/validate-data-schema";
-import { requireKeyExists } from "./helpers/utils";
 
 @Info({
 	title: "StoreContract",
