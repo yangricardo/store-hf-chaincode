@@ -1,6 +1,6 @@
 {
 	"name": "store-hf-chaincode",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Simple Storage",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
@@ -29,8 +29,8 @@
 		"@types/chai": "^4.3.1",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/mocha": "^9.1.1",
-		"@types/node": "^18.0.4",
-		"@types/sinon": "^10.0.12",
+		"@types/node": "^18.0.6",
+		"@types/sinon": "^10.0.13",
 		"@types/sinon-chai": "^3.2.8",
 		"chai": "^4.3.6",
 		"chai-as-promised": "^7.1.1",
@@ -59,9 +59,9 @@
 		],
 		"all": true,
 		"check-coverage": true,
-		"statements": 100,
-		"branches": 100,
-		"functions": 100,
-		"lines": 100
+		"statements": 75,
+		"branches": 50,
+		"functions": 75,
+		"lines": 75
 	}
 }
