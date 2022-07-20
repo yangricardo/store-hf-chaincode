@@ -10,6 +10,7 @@ import { toBuffer } from "./helpers/utils";
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
+import { HealthcheckDTO } from "./helpers/healthcheck";
 
 @Info({
 	title: "StoreContract",
@@ -17,35 +18,20 @@ import { KeyModification } from "./types";
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
-	// @Returns("any")
-	public async healthcheck(ctx: Context): Promise<any> {
-		return {
-			binding: ctx.stub.getBinding(),
-			channelId: ctx.stub.getChannelID(),
-			creator: ctx.stub.getCreator(),
-			dateTimestamp: ctx.stub.getDateTimestamp().toISOString(),
-			tx: {
-				id: ctx.stub.getTxID(),
-				timestamp: new Date(
-					ctx.stub.getTxTimestamp().seconds.toNumber()
-				).toISOString(),
-			},
-			client: {
-				id: ctx.clientIdentity.getID(),
-				mspId: ctx.clientIdentity.getMSPID(),
-			},
-		};
+	@Returns("HealthcheckDTO")
+	public async healthcheck(ctx: Context): Promise<HealthcheckDTO> {
+		return new HealthcheckDTO(ctx);
 	}
 
 	@Transaction(false)
-	// @Returns("boolean")
+	@Returns("boolean")
 	public async storeExists(ctx: Context, storeId: string): Promise<boolean> {
 		const data: Uint8Array = await ctx.stub.getState(storeId);
 		return !!data && data.length > 0;
 	}
 
 	@Transaction()
-	// @Returns("Store")
+	@Returns("Store")
 	public async createStore(
 		ctx: Context,
 		storeId: string,
@@ -68,7 +54,7 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction(false)
-	// @Returns("Store")
+	@Returns("Store")
 	public async readStore(ctx: Context, storeId: string): Promise<Store> {
 		const exists: boolean = await this.storeExists(ctx, storeId);
 		if (!exists) {
@@ -83,7 +69,7 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	// @Returns("Store")
+	@Returns("Store")
 	public async updateStore(
 		ctx: Context,
 		storeId: string,
@@ -106,7 +92,7 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	// @Returns("boolean")
+	@Returns("boolean")
 	public async deleteStore(ctx: Context, storeId: string): Promise<boolean> {
 		const exists: boolean = await this.storeExists(ctx, storeId);
 		if (!exists) {
@@ -117,7 +103,7 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	// @Returns("Iterators.KeyModification[]")
+	@Returns("Iterators.KeyModification[]")
 	public async getHistoryForKey(
 		ctx: Context,
 		storeId: string
@@ -138,7 +124,7 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	// @Returns("Iterators.KeyModification")
+	@Returns("Iterators.KeyModification")
 	public async getHistoryTransactionForKey(
 		ctx: Context,
 		storeId: string,
