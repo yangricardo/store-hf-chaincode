@@ -15,8 +15,7 @@
 		"alwaysStrict": true,
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"types": ["reflect-metadata"]
+		"esModuleInterop": true
 	},
 	"include": ["./src/**/*"],
 	"exclude": ["./src/**/*.spec.ts"]

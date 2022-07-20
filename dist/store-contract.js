@@ -40,8 +40,9 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         if (exists) {
             throw new Error(`The store ${storeId} already exists`);
         }
-        const store = new store_1.Store();
-        store.value = value;
+        const store = {
+            value,
+        };
         const validated = store_1.StoreSchema.validate(store);
         if (validated.error) {
             throw validated.error.details;
@@ -67,8 +68,9 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         if (!exists) {
             throw new Error(`The store ${storeId} does not exist`);
         }
-        const store = new store_1.Store();
-        store.value = newValue;
+        const store = {
+            value: newValue,
+        };
         const validated = store_1.StoreSchema.validate(store);
         if (validated.error) {
             throw validated.error.details;

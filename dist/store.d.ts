@@ -1,5 +1,5 @@
 import Joi from "joi";
-export declare class Store {
+export interface Store {
     value: string;
     [key: string]: any;
 }
