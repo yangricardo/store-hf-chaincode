@@ -152,7 +152,15 @@ export class StoreContract extends Contract {
 		let current = await historyIterator.next();
 		while (!current.done) {
 			if (current.value.txId === txId) {
-				return current.value;
+				const { isDelete, timestamp, value, txId } = current.value;
+				const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
+				const response = {
+					txId,
+					timestamp,
+					isDelete,
+					value: parsedValue,
+				};
+				return response;
 			}
 			current = await historyIterator.next();
 		}
