@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import Joi from "joi";
+import * as Joi from "joi";
 
 export interface Store {
 	value: string;

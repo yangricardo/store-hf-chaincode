@@ -13,9 +13,9 @@
 		"strictPropertyInitialization": false,
 		"allowJs": true,
 		"alwaysStrict": true,
-		"resolveJsonModule": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true
+		"resolveJsonModule": true
+		// "allowSyntheticDefaultImports": true,
+		// "esModuleInterop": true
 	},
 	"include": ["./src/**/*"],
 	"exclude": ["./src/**/*.spec.ts"]
