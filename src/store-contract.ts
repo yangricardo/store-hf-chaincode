@@ -1,4 +1,4 @@
-import { fromUint8Array, keyHasData } from "./helpers/utils";
+import { fromUint8Array, keyHasData, saveKeyState } from "./helpers/utils";
 import {
 	Context,
 	Contract,
@@ -50,8 +50,7 @@ export class StoreContract extends Contract {
 		if (validated.error) {
 			throw validated.error.details;
 		}
-		const buffer: Buffer = toBuffer(validated.value);
-		await ctx.stub.putState(storeId, buffer);
+		await saveKeyState(ctx, storeId, validated.value);
 		return validated.value;
 	}
 
@@ -88,8 +87,7 @@ export class StoreContract extends Contract {
 		if (validated.error) {
 			throw validated.error.details;
 		}
-		const buffer: Buffer = toBuffer(store);
-		await ctx.stub.putState(storeId, buffer);
+		await saveKeyState(ctx, storeId, validated.value);
 		return validated.value;
 	}
 
