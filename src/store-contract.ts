@@ -66,19 +66,11 @@ export class StoreContract extends Contract {
 		storeId: string,
 		newValue: string
 	): Promise<Store> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (!exists) {
-			throw new Error(`The store ${storeId} does not exist`);
-		}
-		const store: Store = {
-			value: newValue,
-		};
-		const validated = StoreSchema.validate(store);
-		if (validated.error) {
-			throw validated.error.details;
-		}
-		await saveKeyState(ctx, storeId, validated.value);
-		return validated.value;
+		let store = await recoverKeyState<Store>(ctx, storeId);
+		store.value = newValue;
+		store = validateData(StoreSchema, store);
+		await saveKeyState(ctx, storeId, store);
+		return store;
 	}
 
 	@Transaction()
