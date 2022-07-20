@@ -5,4 +5,4 @@ const toBuffer = (data) => Buffer.from(JSON.stringify(data));
 exports.toBuffer = toBuffer;
 const fromUint8Array = (data) => JSON.parse(data.toString());
 exports.fromUint8Array = fromUint8Array;
-//# sourceMappingURL=utils.js.map
+//# sourceMappingURL=buffer.js.map

@@ -10,112 +10,107 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreContract = void 0;
-const utils_1 = require("./helpers/utils");
+const helpers_1 = require("./helpers");
 const fabric_contract_api_1 = require("fabric-contract-api");
-const utils_2 = require("./helpers/utils");
 const store_1 = require("./store");
-const healthcheck_1 = require("./helpers/healthcheck");
+const chaincode_error_1 = require("./helpers/chaincode.error");
 let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
     async healthcheck(ctx) {
-        return (0, healthcheck_1.buildHealthcheckFromContext)(ctx);
+        return (0, helpers_1.buildHealthcheckFromContext)(ctx);
     }
     async storeExists(ctx, storeId) {
-        const data = await ctx.stub.getState(storeId);
-        return !!data && data.length > 0;
+        return (0, helpers_1.keyHasData)(ctx, storeId);
     }
     async createStore(ctx, storeId, value) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (exists) {
-            throw new Error(`The store ${storeId} already exists`);
+        try {
+            await (0, helpers_1.requireKeyNotExists)(ctx, storeId);
+            const store = (0, helpers_1.validateData)(store_1.StoreSchema, {
+                value,
+            });
+            await (0, helpers_1.saveKeyState)(ctx, storeId, store);
+            return store;
         }
-        const store = {
-            value,
-        };
-        const validated = store_1.StoreSchema.validate(store);
-        if (validated.error) {
-            throw validated.error.details;
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
         }
-        const buffer = (0, utils_2.toBuffer)(validated.value);
-        await ctx.stub.putState(storeId, buffer);
-        return validated.value;
     }
     async readStore(ctx, storeId) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (!exists) {
-            throw new Error(`The store ${storeId} does not exist`);
+        try {
+            const data = await (0, helpers_1.recoverKeyState)(ctx, storeId);
+            return data;
         }
-        const data = await ctx.stub.getState(storeId);
-        const validated = store_1.StoreSchema.validate((0, utils_1.fromUint8Array)(data));
-        if (validated.error) {
-            throw validated.error.details;
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
         }
-        return validated.value;
     }
     async updateStore(ctx, storeId, newValue) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (!exists) {
-            throw new Error(`The store ${storeId} does not exist`);
+        try {
+            let store = await (0, helpers_1.recoverKeyState)(ctx, storeId);
+            store.value = newValue;
+            store = (0, helpers_1.validateData)(store_1.StoreSchema, store);
+            await (0, helpers_1.saveKeyState)(ctx, storeId, store);
+            return store;
         }
-        const store = {
-            value: newValue,
-        };
-        const validated = store_1.StoreSchema.validate(store);
-        if (validated.error) {
-            throw validated.error.details;
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
         }
-        const buffer = (0, utils_2.toBuffer)(store);
-        await ctx.stub.putState(storeId, buffer);
-        return validated.value;
     }
     async deleteStore(ctx, storeId) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (!exists) {
-            throw new Error(`The store ${storeId} does not exist`);
+        try {
+            const store = await (0, helpers_1.recoverKeyState)(ctx, storeId);
+            await ctx.stub.deleteState(storeId);
+            return store;
         }
-        await ctx.stub.deleteState(storeId);
-        return true;
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
+        }
     }
     async getHistoryForKey(ctx, storeId) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (!exists) {
-            throw new Error(`The store ${storeId} does not exist`);
-        }
-        const historyIterator = await ctx.stub.getHistoryForKey(storeId);
-        const events = [];
-        let current = await historyIterator.next();
-        while (!current.done) {
-            const { txId, timestamp, isDelete } = current.value;
-            events.push({ txId, timestamp, isDelete });
-            current = await historyIterator.next();
-        }
-        return events;
-    }
-    async getHistoryTransactionForKey(ctx, storeId, txId) {
-        const exists = await this.storeExists(ctx, storeId);
-        if (!exists) {
-            throw new Error(`The store ${storeId} does not exist`);
-        }
-        const historyIterator = await ctx.stub.getHistoryForKey(storeId);
-        let current = await historyIterator.next();
-        while (!current.done) {
-            if (current.value.txId === txId) {
-                const { isDelete, timestamp, value, txId } = current.value;
-                const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
-                const response = {
-                    txId,
-                    timestamp,
-                    isDelete,
-                    value: parsedValue,
-                };
-                return response;
+        try {
+            await (0, helpers_1.requireKeyExists)(ctx, storeId);
+            const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+            const events = [];
+            let current = await historyIterator.next();
+            while (!current.done) {
+                const { txId, timestamp, isDelete } = current.value;
+                events.push({ txId, timestamp, isDelete });
+                current = await historyIterator.next();
             }
-            current = await historyIterator.next();
+            return events;
         }
-        throw new Error(`The store ${storeId} has no given txId history`);
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
+        }
+    }
+    async getHistoryTransactionForKey(ctx, storeId, findTxId) {
+        try {
+            await (0, helpers_1.requireKeyExists)(ctx, storeId);
+            const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+            let current = await historyIterator.next();
+            while (!current.done) {
+                if (current.value.txId === findTxId) {
+                    const { isDelete, timestamp, value, txId } = current.value;
+                    const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
+                    const response = {
+                        txId,
+                        timestamp,
+                        isDelete,
+                        value: parsedValue,
+                    };
+                    return response;
+                }
+                current = await historyIterator.next();
+            }
+            throw new Error(`The store ${storeId} has no given txId history`);
+        }
+        catch (error) {
+            throw chaincode_error_1.ChaincodeError.fromError(error);
+        }
     }
 };
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
+    (0, fabric_contract_api_1.Returns)("HealthcheckDTO"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context]),
     __metadata("design:returntype", Promise)
@@ -150,7 +145,7 @@ __decorate([
 ], StoreContract.prototype, "updateStore", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("boolean"),
+    (0, fabric_contract_api_1.Returns)("Store"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
