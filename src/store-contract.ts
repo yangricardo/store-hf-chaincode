@@ -1,4 +1,9 @@
-import { keyHasData, saveKeyState, recoverKeyState } from "./helpers/utils";
+import {
+	keyHasData,
+	saveKeyState,
+	recoverKeyState,
+	requireKeyNotExists,
+} from "./helpers/utils";
 import {
 	Context,
 	Contract,
@@ -13,6 +18,7 @@ import {
 	HealthcheckDTO,
 	buildHealthcheckFromContext,
 } from "./helpers/healthcheck";
+import { validateData } from "./helpers/validate-data-schema";
 
 @Info({
 	title: "StoreContract",
@@ -38,19 +44,12 @@ export class StoreContract extends Contract {
 		storeId: string,
 		value: string
 	): Promise<Store> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (exists) {
-			throw new Error(`The store ${storeId} already exists`);
-		}
-		const store: Store = {
+		requireKeyNotExists(ctx, storeId);
+		const store = validateData(StoreSchema, {
 			value,
-		};
-		const validated = StoreSchema.validate(store);
-		if (validated.error) {
-			throw validated.error.details;
-		}
-		await saveKeyState(ctx, storeId, validated.value);
-		return validated.value;
+		});
+		await saveKeyState(ctx, storeId, store);
+		return store;
 	}
 
 	@Transaction(false)
