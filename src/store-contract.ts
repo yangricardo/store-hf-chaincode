@@ -18,6 +18,7 @@ import {
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
+import { ChaincodeError } from "./helpers/chaincode.error";
 
 @Info({
 	title: "StoreContract",
@@ -43,19 +44,27 @@ export class StoreContract extends Contract {
 		storeId: string,
 		value: string
 	): Promise<Store> {
-		requireKeyNotExists(ctx, storeId);
-		const store = validateData(StoreSchema, {
-			value,
-		});
-		await saveKeyState(ctx, storeId, store);
-		return store;
+		try {
+			await requireKeyNotExists(ctx, storeId);
+			const store = validateData(StoreSchema, {
+				value,
+			});
+			await saveKeyState(ctx, storeId, store);
+			return store;
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
+		}
 	}
 
 	@Transaction(false)
 	@Returns("Store")
 	public async readStore(ctx: Context, storeId: string): Promise<Store> {
-		const data = await recoverKeyState<Store>(ctx, storeId);
-		return data;
+		try {
+			const data = await recoverKeyState<Store>(ctx, storeId);
+			return data;
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
+		}
 	}
 
 	@Transaction()
@@ -65,19 +74,27 @@ export class StoreContract extends Contract {
 		storeId: string,
 		newValue: string
 	): Promise<Store> {
-		let store = await recoverKeyState<Store>(ctx, storeId);
-		store.value = newValue;
-		store = validateData(StoreSchema, store);
-		await saveKeyState(ctx, storeId, store);
-		return store;
+		try {
+			let store = await recoverKeyState<Store>(ctx, storeId);
+			store.value = newValue;
+			store = validateData(StoreSchema, store);
+			await saveKeyState(ctx, storeId, store);
+			return store;
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
+		}
 	}
 
 	@Transaction()
 	@Returns("Store")
 	public async deleteStore(ctx: Context, storeId: string): Promise<Store> {
-		const store = await recoverKeyState<Store>(ctx, storeId);
-		await ctx.stub.deleteState(storeId);
-		return store;
+		try {
+			const store = await recoverKeyState<Store>(ctx, storeId);
+			await ctx.stub.deleteState(storeId);
+			return store;
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
+		}
 	}
 
 	@Transaction()
@@ -86,16 +103,20 @@ export class StoreContract extends Contract {
 		ctx: Context,
 		storeId: string
 	): Promise<KeyModification[]> {
-		await requireKeyExists(ctx, storeId);
-		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
-		const events: KeyModification[] = [];
-		let current = await historyIterator.next();
-		while (!current.done) {
-			const { txId, timestamp, isDelete } = current.value;
-			events.push({ txId, timestamp, isDelete });
-			current = await historyIterator.next();
+		try {
+			await requireKeyExists(ctx, storeId);
+			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+			const events: KeyModification[] = [];
+			let current = await historyIterator.next();
+			while (!current.done) {
+				const { txId, timestamp, isDelete } = current.value;
+				events.push({ txId, timestamp, isDelete });
+				current = await historyIterator.next();
+			}
+			return events;
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
 		}
-		return events;
 	}
 
 	@Transaction()
@@ -103,25 +124,29 @@ export class StoreContract extends Contract {
 	public async getHistoryTransactionForKey(
 		ctx: Context,
 		storeId: string,
-		txId: string
+		findTxId: string
 	): Promise<Iterators.KeyModification> {
-		await requireKeyExists(ctx, storeId);
-		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
-		let current = await historyIterator.next();
-		while (!current.done) {
-			if (current.value.txId === txId) {
-				const { isDelete, timestamp, value, txId } = current.value;
-				const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
-				const response = {
-					txId,
-					timestamp,
-					isDelete,
-					value: parsedValue,
-				};
-				return response;
+		try {
+			await requireKeyExists(ctx, storeId);
+			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
+			let current = await historyIterator.next();
+			while (!current.done) {
+				if (current.value.txId === findTxId) {
+					const { isDelete, timestamp, value, txId } = current.value;
+					const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
+					const response = {
+						txId,
+						timestamp,
+						isDelete,
+						value: parsedValue,
+					};
+					return response;
+				}
+				current = await historyIterator.next();
 			}
-			current = await historyIterator.next();
+			throw new Error(`The store ${storeId} has no given txId history`);
+		} catch (error) {
+			throw ChaincodeError.fromError(error);
 		}
-		throw new Error(`The store ${storeId} has no given txId history`);
 	}
 }
