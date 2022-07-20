@@ -3,7 +3,7 @@
  */
 
 import { Object, Property } from "fabric-contract-api";
-import * as Joi from "joi";
+import Joi from "joi";
 
 @Object()
 export class Store {

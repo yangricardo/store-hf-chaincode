@@ -11,10 +11,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreSchema = exports.Store = void 0;
 const fabric_contract_api_1 = require("fabric-contract-api");
-const Joi = require("joi");
+const joi_1 = __importDefault(require("joi"));
 let Store = class Store {
 };
 __decorate([
@@ -25,8 +28,8 @@ Store = __decorate([
     (0, fabric_contract_api_1.Object)()
 ], Store);
 exports.Store = Store;
-exports.StoreSchema = Joi.object({
-    value: Joi.string().required(),
+exports.StoreSchema = joi_1.default.object({
+    value: joi_1.default.string().required(),
 }).options({
     allowUnknown: true,
     abortEarly: false,

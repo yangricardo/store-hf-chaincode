@@ -1,4 +1,4 @@
-import * as Joi from "joi";
+import Joi from "joi";
 export declare class Store {
     value: string;
     [key: string]: any;
