@@ -11,7 +11,7 @@ export class ChaincodeError<RawErrorType = any> {
 		this.message = message;
 		this.status = status;
 		this.details = details;
-		console.error(this);
+		// console.error(this);
 	}
 
 	static fromError(error: ChaincodeError | Error | unknown) {

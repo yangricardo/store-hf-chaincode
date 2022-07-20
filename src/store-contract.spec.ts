@@ -64,9 +64,12 @@ describe("StoreContract", () => {
 		});
 
 		it("should throw an error for a store that already exists", async () => {
+			const error = new ChaincodeError("The given key already has data", 409, {
+				keyFound: "1001",
+			});
 			await contract
 				.createStore(ctx, "1001", "myvalue")
-				.should.be.rejectedWith("The given key already has data");
+				.should.be.rejectedWith(error);
 		});
 	});
 
@@ -78,10 +81,12 @@ describe("StoreContract", () => {
 		});
 
 		it("should throw an error for a store that does not exist", async () => {
+			const error = new ChaincodeError("Data not found for given key", 404, {
+				keyNotFound: "1003",
+			});
 			await contract
 				.readStore(ctx, "1003")
-				.should.be.instanceof(Promise<ChaincodeError>);
-				// .should.be.rejectedWith(/The store 1003 does not exist/);
+				.should.eventually.be.rejectedWith(error);
 		});
 	});
 
@@ -96,10 +101,12 @@ describe("StoreContract", () => {
 		});
 
 		it("should throw an error for a store that does not exist", async () => {
+			const error = new ChaincodeError("Data not found for given key", 404, {
+				keyNotFound: "1003",
+			});
 			await contract
 				.updateStore(ctx, "1003", "store 1003 new value")
-				.should.be.instanceof(Promise<ChaincodeError>);
-				// .should.be.rejectedWith(/The store 1003 does not exist/);
+				.should.eventually.be.rejectedWith(error);
 		});
 	});
 
@@ -110,19 +117,23 @@ describe("StoreContract", () => {
 		});
 
 		it("should throw an error for a store that does not exist", async () => {
+			const error = new ChaincodeError("Data not found for given key", 404, {
+				keyNotFound: "1003",
+			});
 			await contract
 				.deleteStore(ctx, "1003")
-				.should.be.instanceof(Promise<ChaincodeError>);
-				// .should.be.rejectedWith(/The store 1003 does not exist/);
+				.should.eventually.be.rejectedWith(error);
 		});
 	});
 
 	describe("#getHistoryForKey", () => {
 		it("should throw an error for a store that does not exist", async () => {
+			const error = new ChaincodeError("Data not found for given key", 404, {
+				keyNotFound: "1003",
+			});
 			await contract
 				.getHistoryForKey(ctx, "1003")
-				.should.be.instanceof(Promise<ChaincodeError>);
-				// .should.be.rejectedWith(/The store 1003 does not exist/);
+				.should.eventually.be.rejectedWith(error);
 		});
 		it("should have at least 1 history", async () => {
 			await ctx.stub.getHistoryForKey("1001");
