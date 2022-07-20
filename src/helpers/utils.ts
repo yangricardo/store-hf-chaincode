@@ -1,4 +1,5 @@
 import { Context } from "fabric-contract-api";
+import { ChaincodeError } from "./chaincode.error";
 export const toBuffer = (data: any) => Buffer.from(JSON.stringify(data));
 
 export const fromUint8Array = (data: Uint8Array) => JSON.parse(data.toString());
@@ -11,4 +12,18 @@ export const keyHasData = async (ctx: Context, key: string) => {
 export const saveKeyState = async (ctx: Context, key: string, data: any) => {
 	const buffer: Buffer = toBuffer(data);
 	await ctx.stub.putState(key, buffer);
+};
+
+export const recoverKeyState = async <T = any>(
+	ctx: Context,
+	key: string
+): Promise<T> => {
+	const stateExists = await keyHasData(ctx, key);
+	if (!stateExists) {
+		throw new ChaincodeError(`Data not found for given key`, 404, {
+			keyNotFound: key,
+		});
+	}
+	const rawState = await ctx.stub.getState(key);
+	return fromUint8Array(rawState);
 };
