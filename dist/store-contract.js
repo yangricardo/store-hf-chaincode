@@ -120,56 +120,48 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
 };
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
-    (0, fabric_contract_api_1.Returns)("any"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "healthcheck", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
-    (0, fabric_contract_api_1.Returns)("boolean"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "storeExists", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("Store"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "createStore", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(false),
-    (0, fabric_contract_api_1.Returns)("Store"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "readStore", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("Store"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "updateStore", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("boolean"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "deleteStore", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("Iterators.KeyModification[]"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String]),
     __metadata("design:returntype", Promise)
 ], StoreContract.prototype, "getHistoryForKey", null);
 __decorate([
     (0, fabric_contract_api_1.Transaction)(),
-    (0, fabric_contract_api_1.Returns)("Iterators.KeyModification"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [fabric_contract_api_1.Context, String, String]),
     __metadata("design:returntype", Promise)
