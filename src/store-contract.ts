@@ -19,6 +19,7 @@ import {
 	buildHealthcheckFromContext,
 } from "./helpers/healthcheck";
 import { validateData } from "./helpers/validate-data-schema";
+import { requireKeyExists } from "./helpers/utils";
 
 @Info({
 	title: "StoreContract",
@@ -87,10 +88,7 @@ export class StoreContract extends Contract {
 		ctx: Context,
 		storeId: string
 	): Promise<KeyModification[]> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (!exists) {
-			throw new Error(`The store ${storeId} does not exist`);
-		}
+		await requireKeyExists(ctx, storeId);
 		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
 		const events: KeyModification[] = [];
 		let current = await historyIterator.next();
@@ -109,10 +107,7 @@ export class StoreContract extends Contract {
 		storeId: string,
 		txId: string
 	): Promise<Iterators.KeyModification> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (!exists) {
-			throw new Error(`The store ${storeId} does not exist`);
-		}
+		await requireKeyExists(ctx, storeId);
 		const historyIterator = await ctx.stub.getHistoryForKey(storeId);
 		let current = await historyIterator.next();
 		while (!current.done) {

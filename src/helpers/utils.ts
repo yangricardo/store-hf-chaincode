@@ -14,18 +14,13 @@ export const saveKeyState = async (ctx: Context, key: string, data: any) => {
 	await ctx.stub.putState(key, buffer);
 };
 
-export const recoverKeyState = async <T = any>(
-	ctx: Context,
-	key: string
-): Promise<T> => {
+export const requireKeyExists = async (ctx: Context, key: string) => {
 	const stateExists = await keyHasData(ctx, key);
 	if (!stateExists) {
 		throw new ChaincodeError(`Data not found for given key`, 404, {
 			keyNotFound: key,
 		});
 	}
-	const rawState = await ctx.stub.getState(key);
-	return fromUint8Array(rawState);
 };
 
 export const requireKeyNotExists = async (ctx: Context, key: string) => {
@@ -35,4 +30,13 @@ export const requireKeyNotExists = async (ctx: Context, key: string) => {
 			keyFound: key,
 		});
 	}
+};
+
+export const recoverKeyState = async <T = any>(
+	ctx: Context,
+	key: string
+): Promise<T> => {
+	await requireKeyExists(ctx, key);
+	const rawState = await ctx.stub.getState(key);
+	return fromUint8Array(rawState);
 };
