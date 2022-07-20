@@ -74,14 +74,11 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	@Returns("boolean")
-	public async deleteStore(ctx: Context, storeId: string): Promise<boolean> {
-		const exists: boolean = await this.storeExists(ctx, storeId);
-		if (!exists) {
-			throw new Error(`The store ${storeId} does not exist`);
-		}
+	@Returns("Store")
+	public async deleteStore(ctx: Context, storeId: string): Promise<Store> {
+		const store = await recoverKeyState<Store>(ctx, storeId);
 		await ctx.stub.deleteState(storeId);
-		return true;
+		return store;
 	}
 
 	@Transaction()
