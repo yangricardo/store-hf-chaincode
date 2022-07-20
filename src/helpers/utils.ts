@@ -27,3 +27,12 @@ export const recoverKeyState = async <T = any>(
 	const rawState = await ctx.stub.getState(key);
 	return fromUint8Array(rawState);
 };
+
+export const requireKeyNotExists = async (ctx: Context, key: string) => {
+	const stateExists = await keyHasData(ctx, key);
+	if (stateExists) {
+		throw new ChaincodeError(`The given key already has data`, 409, {
+			keyFound: key,
+		});
+	}
+};
