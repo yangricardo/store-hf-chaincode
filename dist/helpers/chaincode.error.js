@@ -6,7 +6,7 @@ class ChaincodeError {
         this.message = message;
         this.status = status;
         this.details = details;
-        console.error(this);
+        // console.error(this);
     }
     static fromError(error) {
         if (error instanceof ChaincodeError) {
