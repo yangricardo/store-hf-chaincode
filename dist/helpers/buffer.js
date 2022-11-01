@@ -5,12 +5,12 @@ const tslib_1 = require("tslib");
 const stringify = require("json-stringify-deterministic");
 const sort_keys_recursive_1 = tslib_1.__importDefault(require("sort-keys-recursive"));
 const consistentStringfy = (data) => {
-    const sortedData = (0, sort_keys_recursive_1.default)(data);
     try {
+        const sortedData = (0, sort_keys_recursive_1.default)(data);
         return stringify(sortedData);
     }
     catch {
-        return JSON.stringify(sortedData);
+        return JSON.stringify(data);
     }
 };
 exports.consistentStringfy = consistentStringfy;
