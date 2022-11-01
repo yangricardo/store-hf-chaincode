@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChaincodeError = void 0;
+const fabric_shim_1 = require("fabric-shim");
 const buffer_1 = require("./buffer");
 class ChaincodeError {
     name;
@@ -23,6 +24,9 @@ class ChaincodeError {
     }
     toString() {
         return (0, buffer_1.consistentStringfy)(this);
+    }
+    toShimResponseError() {
+        return fabric_shim_1.Shim.error((0, buffer_1.toBuffer)(this));
     }
 }
 exports.ChaincodeError = ChaincodeError;
