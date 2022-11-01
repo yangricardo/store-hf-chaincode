@@ -42,7 +42,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 
@@ -52,7 +52,7 @@ export class StoreContract extends Contract {
 			const data = await recoverKeyState<Store>(ctx, storeId);
 			return consistentStringfy(data);
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 
@@ -69,7 +69,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 
@@ -80,7 +80,7 @@ export class StoreContract extends Contract {
 			await ctx.stub.deleteState(storeId);
 			return consistentStringfy(store);
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 
@@ -101,7 +101,7 @@ export class StoreContract extends Contract {
 			}
 			return consistentStringfy(events);
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 
@@ -116,25 +116,30 @@ export class StoreContract extends Contract {
 			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
 			let current = await historyIterator.next();
 			let foundTxId = false;
-			while (!current.done || !foundTxId) {
+			let response: any = {};
+			while (!current.done && !foundTxId) {
 				foundTxId = current.value.txId === findTxId;
 				const { isDelete, timestamp, value, txId } = current.value;
 				console.log(
 					`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`,
 					current.value
 				);
-				let response = {
+				response = {
 					txId,
 					timestamp,
 					isDelete,
-					payload: Buffer.from(value).toString("utf-8"),
+					payload: value.toString(),
 				};
-				if (foundTxId) return consistentStringfy(response);
+				console.log(
+					`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`,
+					response.payload
+				);
 				current = await historyIterator.next();
 			}
-			throw new Error(`The store ${storeId} has no given txId history`);
+			if (foundTxId) return consistentStringfy(response);
+			else throw new Error(`The store ${storeId} has no given txId history`);
 		} catch (error) {
-			throw ChaincodeError.fromError(error);
+			return consistentStringfy(ChaincodeError.fromError(error));
 		}
 	}
 }

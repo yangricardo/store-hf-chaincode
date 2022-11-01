@@ -24,7 +24,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return keyStateSaved;
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
     async readStore(ctx, storeId) {
@@ -33,7 +33,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(data);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
     async updateStore(ctx, storeId, newValue) {
@@ -45,7 +45,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return keyStateSaved;
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
     async deleteStore(ctx, storeId) {
@@ -55,7 +55,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(store);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
     async getHistoryForKey(ctx, storeId) {
@@ -72,7 +72,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(events);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
     async getHistoryTransactionForKey(ctx, storeId, findTxId) {
@@ -81,24 +81,27 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             const historyIterator = await ctx.stub.getHistoryForKey(storeId);
             let current = await historyIterator.next();
             let foundTxId = false;
-            while (!current.done || !foundTxId) {
+            let response = {};
+            while (!current.done && !foundTxId) {
                 foundTxId = current.value.txId === findTxId;
                 const { isDelete, timestamp, value, txId } = current.value;
                 console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`, current.value);
-                let response = {
+                response = {
                     txId,
                     timestamp,
                     isDelete,
-                    payload: Buffer.from(value).toString("utf-8"),
+                    payload: value.toString(),
                 };
-                if (foundTxId)
-                    return (0, buffer_1.consistentStringfy)(response);
+                console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`, response.payload);
                 current = await historyIterator.next();
             }
-            throw new Error(`The store ${storeId} has no given txId history`);
+            if (foundTxId)
+                return (0, buffer_1.consistentStringfy)(response);
+            else
+                throw new Error(`The store ${storeId} has no given txId history`);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error);
+            return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
         }
     }
 };
