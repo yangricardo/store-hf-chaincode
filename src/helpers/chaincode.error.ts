@@ -27,11 +27,7 @@ export class ChaincodeError<RawErrorType = any> {
 				consistentStringfy(error)
 			);
 		} else if (error instanceof ChaincodeError) {
-			return new ChaincodeError(
-				error.message,
-				error.status || status,
-				consistentStringfy(error)
-			);
+			return error;
 		} else if (typeof error === "string") {
 			return new ChaincodeError(error, status);
 		}

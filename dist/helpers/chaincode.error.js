@@ -17,7 +17,7 @@ class ChaincodeError {
             return new ChaincodeError(error.message, status, (0, buffer_1.consistentStringfy)(error));
         }
         else if (error instanceof ChaincodeError) {
-            return new ChaincodeError(error.message, error.status || status, (0, buffer_1.consistentStringfy)(error));
+            return error;
         }
         else if (typeof error === "string") {
             return new ChaincodeError(error, status);
