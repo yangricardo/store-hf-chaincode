@@ -1,4 +1,10 @@
-export const toBuffer = (data: any) => Buffer.from(JSON.stringify(data));
+import { stringify } from "querystring";
+import sortKeysRecursive from "sort-keys-recursive";
+
+export const consistentStringfy = (data: any) =>
+	stringify(sortKeysRecursive(data));
+
+export const toBuffer = (data: any) => Buffer.from(consistentStringfy(data));
 
 export const fromUint8Array = <ExpectedDTO = any>(
 	data: Uint8Array
