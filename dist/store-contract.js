@@ -18,7 +18,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         try {
             await (0, helpers_1.requireKeyNotExists)(ctx, storeId);
             const store = (0, helpers_1.validateData)(store_1.StoreSchema, {
-                value,
+                value: JSON.parse(value),
             });
             const keyStateSaved = await (0, helpers_1.saveKeyState)(ctx, storeId, store);
             return keyStateSaved;

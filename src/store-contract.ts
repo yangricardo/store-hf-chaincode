@@ -37,8 +37,8 @@ export class StoreContract extends Contract {
 		try {
 			await requireKeyNotExists(ctx, storeId);
 			const store = validateData(StoreSchema, {
-				value,
-			});
+				value: JSON.parse(value),
+			} as Store);
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
