@@ -8,13 +8,7 @@ import {
 	validateData,
 	requireKeyExists,
 } from "./helpers";
-import {
-	Context,
-	Contract,
-	Info,
-	Returns,
-	Transaction,
-} from "fabric-contract-api";
+import { Context, Contract, Info, Transaction } from "fabric-contract-api";
 import { Store, StoreSchema } from "./store";
 import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
@@ -26,19 +20,16 @@ import { ChaincodeError } from "./helpers/chaincode.error";
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
-	@Returns("HealthcheckDTO")
 	public async healthcheck(ctx: Context): Promise<HealthcheckDTO> {
 		return buildHealthcheckFromContext(ctx);
 	}
 
 	@Transaction(false)
-	@Returns("boolean")
 	public async storeExists(ctx: Context, storeId: string): Promise<boolean> {
 		return keyHasData(ctx, storeId);
 	}
 
 	@Transaction()
-	@Returns("Store")
 	public async createStore(
 		ctx: Context,
 		storeId: string,
@@ -57,7 +48,6 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction(false)
-	@Returns("Store")
 	public async readStore(ctx: Context, storeId: string): Promise<Store> {
 		try {
 			const data = await recoverKeyState<Store>(ctx, storeId);
@@ -68,7 +58,6 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	@Returns("Store")
 	public async updateStore(
 		ctx: Context,
 		storeId: string,
@@ -86,7 +75,6 @@ export class StoreContract extends Contract {
 	}
 
 	@Transaction()
-	@Returns("Store")
 	public async deleteStore(ctx: Context, storeId: string): Promise<Store> {
 		try {
 			const store = await recoverKeyState<Store>(ctx, storeId);
@@ -97,8 +85,7 @@ export class StoreContract extends Contract {
 		}
 	}
 
-	@Transaction()
-	@Returns("Iterators.KeyModification[]")
+	@Transaction(false)
 	public async getHistoryForKey(
 		ctx: Context,
 		storeId: string
@@ -119,8 +106,7 @@ export class StoreContract extends Contract {
 		}
 	}
 
-	@Transaction()
-	@Returns("Iterators.KeyModification")
+	@Transaction(false)
 	public async getHistoryTransactionForKey(
 		ctx: Context,
 		storeId: string,
