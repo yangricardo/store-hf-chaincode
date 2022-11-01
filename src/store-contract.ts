@@ -42,7 +42,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 
@@ -52,7 +52,7 @@ export class StoreContract extends Contract {
 			const data = await recoverKeyState<Store>(ctx, storeId);
 			return consistentStringfy(data);
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 
@@ -69,7 +69,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 
@@ -80,7 +80,7 @@ export class StoreContract extends Contract {
 			await ctx.stub.deleteState(storeId);
 			return consistentStringfy(store);
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 
@@ -101,7 +101,7 @@ export class StoreContract extends Contract {
 			}
 			return consistentStringfy(events);
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 
@@ -144,9 +144,9 @@ export class StoreContract extends Contract {
 				current = await historyIterator.next();
 				stopIterator = foundTxId || current.done;
 			}
-			return JSON.stringify(response);
+			return consistentStringfy(response);
 		} catch (error) {
-			return consistentStringfy(ChaincodeError.fromError(error));
+			return ChaincodeError.fromError(error).toString();
 		}
 	}
 }

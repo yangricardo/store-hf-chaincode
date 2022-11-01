@@ -1,3 +1,5 @@
+import { consistentStringfy } from "./buffer";
+
 export class ChaincodeError<RawErrorType = any> {
 	name: "ChaincodeError";
 	message: string;
@@ -16,13 +18,14 @@ export class ChaincodeError<RawErrorType = any> {
 
 	static fromError(error: ChaincodeError | Error | unknown) {
 		if (error instanceof ChaincodeError) {
-			return error;
+			return new ChaincodeError(error.message, error.status, error);
 		} else if (error instanceof Error) {
-			return new ChaincodeError(error.message, 500, {
-				name: error.name,
-				stack: error.stack,
-			});
+			return new ChaincodeError(error.message, 500, error);
 		}
-		return new ChaincodeError("Unkown Error", 500, error);
+		return new ChaincodeError("Unknown Error", 500, error);
+	}
+
+	toString() {
+		return consistentStringfy(this);
 	}
 }

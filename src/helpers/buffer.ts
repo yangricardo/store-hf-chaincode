@@ -1,8 +1,14 @@
 const stringify = require("json-stringify-deterministic");
 import sortKeysRecursive from "sort-keys-recursive";
 
-export const consistentStringfy = (data: any) =>
-	stringify(sortKeysRecursive(data));
+export const consistentStringfy = (data: any) => {
+	const sortedData = sortKeysRecursive(data);
+	try {
+		return stringify(sortedData);
+	} catch {
+		return JSON.stringify(sortedData);
+	}
+};
 
 export const toBuffer = (data: any) => Buffer.from(consistentStringfy(data));
 

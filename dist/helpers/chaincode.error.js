@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChaincodeError = void 0;
+const buffer_1 = require("./buffer");
 class ChaincodeError {
     name;
     message;
@@ -13,15 +14,15 @@ class ChaincodeError {
     }
     static fromError(error) {
         if (error instanceof ChaincodeError) {
-            return error;
+            return new ChaincodeError(error.message, error.status, error);
         }
         else if (error instanceof Error) {
-            return new ChaincodeError(error.message, 500, {
-                name: error.name,
-                stack: error.stack,
-            });
+            return new ChaincodeError(error.message, 500, error);
         }
-        return new ChaincodeError("Unkown Error", 500, error);
+        return new ChaincodeError("Unknown Error", 500, error);
+    }
+    toString() {
+        return (0, buffer_1.consistentStringfy)(this);
     }
 }
 exports.ChaincodeError = ChaincodeError;
