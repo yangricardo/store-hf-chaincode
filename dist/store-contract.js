@@ -107,6 +107,8 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
                 current = await historyIterator.next();
                 stopIterator = foundTxId || current.done;
             }
+            if (!foundTxId)
+                throw new Error("Could not find given transaction history for key.");
             return (0, buffer_1.consistentStringfy)(response);
         }
         catch (error) {

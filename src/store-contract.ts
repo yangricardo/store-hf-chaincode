@@ -144,6 +144,8 @@ export class StoreContract extends Contract {
 				current = await historyIterator.next();
 				stopIterator = foundTxId || current.done;
 			}
+			if (!foundTxId)
+				throw new Error("Could not find given transaction history for key.");
 			return consistentStringfy(response);
 		} catch (error) {
 			return ChaincodeError.fromError(error).toString();
