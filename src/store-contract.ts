@@ -118,12 +118,11 @@ export class StoreContract extends Contract {
 			while (!current.done) {
 				if (current.value.txId === findTxId) {
 					const { isDelete, timestamp, value, txId } = current.value;
-					const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
 					const response = {
 						txId,
 						timestamp,
 						isDelete,
-						value: parsedValue,
+						payload: Buffer.from(value).toString("utf-8"),
 					};
 					return consistentStringfy(response);
 				}

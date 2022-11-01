@@ -83,12 +83,11 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             while (!current.done) {
                 if (current.value.txId === findTxId) {
                     const { isDelete, timestamp, value, txId } = current.value;
-                    const parsedValue = JSON.parse(Buffer.from(value).toString("utf-8"));
                     const response = {
                         txId,
                         timestamp,
                         isDelete,
-                        value: parsedValue,
+                        payload: Buffer.from(value).toString("utf-8"),
                     };
                     return (0, buffer_1.consistentStringfy)(response);
                 }
