@@ -1,6 +1,6 @@
 {
 	"name": "store-hf-chaincode",
-	"version": "1.0.17-c",
+	"version": "1.0.17-d",
 	"description": "Simple Storage",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
@@ -23,7 +23,9 @@
 	"dependencies": {
 		"fabric-contract-api": "2.4.2",
 		"fabric-shim": "2.4.2",
-		"joi": "17.7.0"
+		"joi": "17.7.0",
+		"json-stringify-deterministic": "1.0.7",
+		"sort-keys-recursive": "2.1.7"
 	},
 	"devDependencies": {
 		"@types/chai": "4.3.3",
