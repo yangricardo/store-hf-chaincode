@@ -80,17 +80,18 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             await (0, helpers_1.requireKeyExists)(ctx, storeId);
             const historyIterator = await ctx.stub.getHistoryForKey(storeId);
             let current = await historyIterator.next();
-            while (!current.done) {
-                if (current.value.txId === findTxId) {
-                    const { isDelete, timestamp, value, txId } = current.value;
-                    const response = {
-                        txId,
-                        timestamp,
-                        isDelete,
-                        payload: Buffer.from(value).toString("utf-8"),
-                    };
+            let foundTxId = false;
+            while (!current.done || !foundTxId) {
+                foundTxId = current.value.txId === findTxId;
+                const { isDelete, timestamp, value, txId } = current.value;
+                let response = {
+                    txId,
+                    timestamp,
+                    isDelete,
+                    payload: Buffer.from(value).toString("utf-8"),
+                };
+                if (foundTxId)
                     return (0, buffer_1.consistentStringfy)(response);
-                }
                 current = await historyIterator.next();
             }
             throw new Error(`The store ${storeId} has no given txId history`);

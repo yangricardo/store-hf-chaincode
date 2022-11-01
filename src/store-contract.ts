@@ -115,17 +115,17 @@ export class StoreContract extends Contract {
 			await requireKeyExists(ctx, storeId);
 			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
 			let current = await historyIterator.next();
-			while (!current.done) {
-				if (current.value.txId === findTxId) {
-					const { isDelete, timestamp, value, txId } = current.value;
-					const response = {
-						txId,
-						timestamp,
-						isDelete,
-						payload: Buffer.from(value).toString("utf-8"),
-					};
-					return consistentStringfy(response);
-				}
+			let foundTxId = false;
+			while (!current.done || !foundTxId) {
+				foundTxId = current.value.txId === findTxId;
+				const { isDelete, timestamp, value, txId } = current.value;
+				let response = {
+					txId,
+					timestamp,
+					isDelete,
+					payload: Buffer.from(value).toString("utf-8"),
+				};
+				if (foundTxId) return consistentStringfy(response);
 				current = await historyIterator.next();
 			}
 			throw new Error(`The store ${storeId} has no given txId history`);
