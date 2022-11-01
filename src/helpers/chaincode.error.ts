@@ -1,5 +1,4 @@
-import { Shim } from "fabric-shim";
-import { consistentStringfy, toBuffer } from "./buffer";
+import { consistentStringfy } from "./buffer";
 
 export class ChaincodeError<RawErrorType = any> {
 	name: "ChaincodeError";
@@ -19,18 +18,18 @@ export class ChaincodeError<RawErrorType = any> {
 
 	static fromError(error: ChaincodeError | Error | unknown) {
 		if (error instanceof ChaincodeError) {
-			return new ChaincodeError(error.message, error.status, error);
+			return new ChaincodeError(
+				error.message,
+				error.status,
+				consistentStringfy(error)
+			);
 		} else if (error instanceof Error) {
-			return new ChaincodeError(error.message, 500, error);
+			return new ChaincodeError(error.message, 500, consistentStringfy(error));
 		}
-		return new ChaincodeError("Unknown Error", 500, error);
+		return new ChaincodeError("Unknown Error", 500, consistentStringfy(error));
 	}
 
 	toString() {
 		return consistentStringfy(this);
-	}
-
-	toShimResponseError() {
-		return Shim.error(toBuffer(this));
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "store-hf-chaincode",
-	"version": "1.0.17-r",
+	"version": "1.0.17-s",
 	"description": "Simple Storage",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
