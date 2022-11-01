@@ -81,24 +81,26 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             const historyIterator = await ctx.stub.getHistoryForKey(storeId);
             let current = await historyIterator.next();
             let foundTxId = false;
+            let stopIterator = foundTxId || current.done;
             let response = {};
-            while (!current.done && !foundTxId) {
+            while (!stopIterator) {
                 foundTxId = current.value.txId === findTxId;
                 const { isDelete, timestamp, value, txId } = current.value;
-                console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`, current.value);
-                response = {
+                let currentHistory = {
                     txId,
                     timestamp,
                     isDelete,
                     payload: value.toString(),
                 };
-                console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`, response.payload);
+                console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId},foundTxId=${foundTxId})`, currentHistory);
+                if (foundTxId) {
+                    response = currentHistory;
+                    break;
+                }
                 current = await historyIterator.next();
+                stopIterator = foundTxId || current.done;
             }
-            if (foundTxId)
-                return (0, buffer_1.consistentStringfy)(response);
-            else
-                throw new Error(`The store ${storeId} has no given txId history`);
+            return (0, buffer_1.consistentStringfy)(response);
         }
         catch (error) {
             return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));
