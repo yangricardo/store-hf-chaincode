@@ -84,6 +84,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             while (!current.done || !foundTxId) {
                 foundTxId = current.value.txId === findTxId;
                 const { isDelete, timestamp, value, txId } = current.value;
+                console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId})`, current.value);
                 let response = {
                     txId,
                     timestamp,
