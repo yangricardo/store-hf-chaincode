@@ -1,16 +1,15 @@
+import { consistentStringfy } from "./helpers/buffer";
 import {
 	keyHasData,
 	saveKeyState,
 	recoverKeyState,
 	requireKeyNotExists,
 	buildHealthcheckFromContext,
-	HealthcheckDTO,
 	validateData,
 	requireKeyExists,
 } from "./helpers";
 import { Context, Contract, Info, Transaction } from "fabric-contract-api";
 import { Store, StoreSchema } from "./store";
-import { Iterators } from "fabric-shim";
 import { KeyModification } from "./types";
 import { ChaincodeError } from "./helpers/chaincode.error";
 
@@ -20,8 +19,8 @@ import { ChaincodeError } from "./helpers/chaincode.error";
 })
 export class StoreContract extends Contract {
 	@Transaction(false)
-	public async healthcheck(ctx: Context): Promise<HealthcheckDTO> {
-		return buildHealthcheckFromContext(ctx);
+	public async healthcheck(ctx: Context): Promise<string> {
+		return consistentStringfy(buildHealthcheckFromContext(ctx));
 	}
 
 	@Transaction(false)
@@ -34,24 +33,24 @@ export class StoreContract extends Contract {
 		ctx: Context,
 		storeId: string,
 		value: string
-	): Promise<Store> {
+	): Promise<string> {
 		try {
 			await requireKeyNotExists(ctx, storeId);
 			const store = validateData(StoreSchema, {
 				value,
 			});
-			await saveKeyState(ctx, storeId, store);
-			return store;
+			const keyStateSaved = await saveKeyState(ctx, storeId, store);
+			return keyStateSaved;
 		} catch (error) {
 			throw ChaincodeError.fromError(error);
 		}
 	}
 
 	@Transaction(false)
-	public async readStore(ctx: Context, storeId: string): Promise<Store> {
+	public async readStore(ctx: Context, storeId: string): Promise<string> {
 		try {
 			const data = await recoverKeyState<Store>(ctx, storeId);
-			return data;
+			return consistentStringfy(data);
 		} catch (error) {
 			throw ChaincodeError.fromError(error);
 		}
@@ -62,24 +61,24 @@ export class StoreContract extends Contract {
 		ctx: Context,
 		storeId: string,
 		newValue: string
-	): Promise<Store> {
+	): Promise<string> {
 		try {
 			let store = await recoverKeyState<Store>(ctx, storeId);
 			store.value = newValue;
 			store = validateData(StoreSchema, store);
-			await saveKeyState(ctx, storeId, store);
-			return store;
+			const keyStateSaved = await saveKeyState(ctx, storeId, store);
+			return keyStateSaved;
 		} catch (error) {
 			throw ChaincodeError.fromError(error);
 		}
 	}
 
 	@Transaction()
-	public async deleteStore(ctx: Context, storeId: string): Promise<Store> {
+	public async deleteStore(ctx: Context, storeId: string): Promise<string> {
 		try {
 			const store = await recoverKeyState<Store>(ctx, storeId);
 			await ctx.stub.deleteState(storeId);
-			return store;
+			return consistentStringfy(store);
 		} catch (error) {
 			throw ChaincodeError.fromError(error);
 		}
@@ -89,7 +88,7 @@ export class StoreContract extends Contract {
 	public async getHistoryForKey(
 		ctx: Context,
 		storeId: string
-	): Promise<KeyModification[]> {
+	): Promise<string> {
 		try {
 			await requireKeyExists(ctx, storeId);
 			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
@@ -100,7 +99,7 @@ export class StoreContract extends Contract {
 				events.push({ txId, timestamp, isDelete });
 				current = await historyIterator.next();
 			}
-			return events;
+			return consistentStringfy(events);
 		} catch (error) {
 			throw ChaincodeError.fromError(error);
 		}
@@ -111,7 +110,7 @@ export class StoreContract extends Contract {
 		ctx: Context,
 		storeId: string,
 		findTxId: string
-	): Promise<Iterators.KeyModification> {
+	): Promise<string> {
 		try {
 			await requireKeyExists(ctx, storeId);
 			const historyIterator = await ctx.stub.getHistoryForKey(storeId);
@@ -126,7 +125,7 @@ export class StoreContract extends Contract {
 						isDelete,
 						value: parsedValue,
 					};
-					return response;
+					return consistentStringfy(response);
 				}
 				current = await historyIterator.next();
 			}
