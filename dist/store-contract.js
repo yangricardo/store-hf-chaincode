@@ -86,11 +86,18 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             while (!stopIterator) {
                 foundTxId = current.value.txId === findTxId;
                 const { isDelete, timestamp, value, txId } = current.value;
+                let payload = null;
+                try {
+                    payload = JSON.parse(value.toString());
+                }
+                catch (error) {
+                    payload = value.toString();
+                }
                 let currentHistory = {
                     txId,
                     timestamp,
                     isDelete,
-                    payload: value.toString(),
+                    payload,
                 };
                 console.log(`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId},foundTxId=${foundTxId})`, currentHistory);
                 if (foundTxId) {
@@ -100,7 +107,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
                 current = await historyIterator.next();
                 stopIterator = foundTxId || current.done;
             }
-            return (0, buffer_1.consistentStringfy)(response);
+            return JSON.stringify(response);
         }
         catch (error) {
             return (0, buffer_1.consistentStringfy)(chaincode_error_1.ChaincodeError.fromError(error));

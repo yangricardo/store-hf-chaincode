@@ -121,11 +121,17 @@ export class StoreContract extends Contract {
 			while (!stopIterator) {
 				foundTxId = current.value.txId === findTxId;
 				const { isDelete, timestamp, value, txId } = current.value;
+				let payload = null;
+				try {
+					payload = JSON.parse(value.toString());
+				} catch (error) {
+					payload = value.toString();
+				}
 				let currentHistory = {
 					txId,
 					timestamp,
 					isDelete,
-					payload: value.toString(),
+					payload,
 				};
 				console.log(
 					`getHistoryTransactionForKey(storeId=${storeId},findTxId=${findTxId},foundTxId=${foundTxId})`,
@@ -138,7 +144,7 @@ export class StoreContract extends Contract {
 				current = await historyIterator.next();
 				stopIterator = foundTxId || current.done;
 			}
-			return consistentStringfy(response);
+			return JSON.stringify(response);
 		} catch (error) {
 			return consistentStringfy(ChaincodeError.fromError(error));
 		}
