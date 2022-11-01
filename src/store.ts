@@ -5,12 +5,12 @@
 import * as Joi from "joi";
 
 export interface Store {
-	value: string;
+	value: any;
 	[key: string]: any;
 }
 
 export const StoreSchema = Joi.object<Store>({
-	value: Joi.string().required(),
+	value: Joi.object().unknown(true).required(),
 }).options({
 	allowUnknown: true,
 	abortEarly: false,

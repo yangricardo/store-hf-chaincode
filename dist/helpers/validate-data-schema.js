@@ -10,7 +10,7 @@ const defaultErrorValidationOptions = {
     },
 };
 const validateData = (schema, data, errorOptions = defaultErrorValidationOptions) => {
-    const validated = schema.validate(data, {
+    const validated = schema.validate((typeof data === "string" && JSON.parse(data)) || data, {
         ...errorOptions?.options,
         abortEarly: false,
     });

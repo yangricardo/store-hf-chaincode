@@ -22,10 +22,13 @@ export const validateData = <ValidatedDTO = any>(
 	data: any,
 	errorOptions: ErrorValidationOptions = defaultErrorValidationOptions
 ) => {
-	const validated = schema.validate(data, {
-		...errorOptions?.options,
-		abortEarly: false,
-	});
+	const validated = schema.validate(
+		(typeof data === "string" && JSON.parse(data)) || data,
+		{
+			...errorOptions?.options,
+			abortEarly: false,
+		}
+	);
 	if (validated.error) {
 		throw new ChaincodeError(
 			errorOptions?.errorMessage || "Invalid Data",

@@ -4,7 +4,7 @@ exports.StoreSchema = void 0;
 const tslib_1 = require("tslib");
 const Joi = tslib_1.__importStar(require("joi"));
 exports.StoreSchema = Joi.object({
-    value: Joi.string().required(),
+    value: Joi.object().unknown(true).required(),
 }).options({
     allowUnknown: true,
     abortEarly: false,
