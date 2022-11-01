@@ -12,14 +12,17 @@ class ChaincodeError {
         this.status = status;
         this.details = details;
     }
-    static fromError(error) {
-        if (error instanceof ChaincodeError) {
-            return new ChaincodeError(error.message, error.status, (0, buffer_1.consistentStringfy)(error));
+    static fromError(error, status = 500) {
+        if (error instanceof Error) {
+            return new ChaincodeError(error.message, status, (0, buffer_1.consistentStringfy)(error));
         }
-        else if (error instanceof Error) {
-            return new ChaincodeError(error.message, 500, (0, buffer_1.consistentStringfy)(error));
+        else if (error instanceof ChaincodeError) {
+            return new ChaincodeError(error.message, error.status || status, (0, buffer_1.consistentStringfy)(error));
         }
-        return new ChaincodeError("Unknown Error", 500, (0, buffer_1.consistentStringfy)(error));
+        else if (typeof error === "string") {
+            return new ChaincodeError(error, status);
+        }
+        return new ChaincodeError("Unknown Error", status, (0, buffer_1.consistentStringfy)(error));
     }
     toString() {
         return (0, buffer_1.consistentStringfy)(this);

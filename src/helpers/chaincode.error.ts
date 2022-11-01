@@ -16,17 +16,30 @@ export class ChaincodeError<RawErrorType = any> {
 		// console.error(this);
 	}
 
-	static fromError(error: ChaincodeError | Error | unknown) {
-		if (error instanceof ChaincodeError) {
+	static fromError(
+		error: string | ChaincodeError | Error | unknown,
+		status: string | number | undefined = 500
+	) {
+		if (error instanceof Error) {
 			return new ChaincodeError(
 				error.message,
-				error.status,
+				status,
 				consistentStringfy(error)
 			);
-		} else if (error instanceof Error) {
-			return new ChaincodeError(error.message, 500, consistentStringfy(error));
+		} else if (error instanceof ChaincodeError) {
+			return new ChaincodeError(
+				error.message,
+				error.status || status,
+				consistentStringfy(error)
+			);
+		} else if (typeof error === "string") {
+			return new ChaincodeError(error, status);
 		}
-		return new ChaincodeError("Unknown Error", 500, consistentStringfy(error));
+		return new ChaincodeError(
+			"Unknown Error",
+			status,
+			consistentStringfy(error)
+		);
 	}
 
 	toString() {
