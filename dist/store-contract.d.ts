@@ -9,3 +9,4 @@ export declare class StoreContract extends Contract {
     getHistoryForKey(ctx: Context, storeId: string): Promise<string>;
     getHistoryTransactionForKey(ctx: Context, storeId: string, findTxId: string): Promise<string>;
 }
+//# sourceMappingURL=store-contract.d.ts.map

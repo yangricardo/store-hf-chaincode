@@ -10,11 +10,13 @@ const defaultErrorValidationOptions = {
     },
 };
 const validateData = (schema, data, errorOptions = defaultErrorValidationOptions) => {
-    const validated = schema.validate(data, Object.assign(Object.assign({}, errorOptions === null || errorOptions === void 0 ? void 0 : errorOptions.options), { abortEarly: false }));
+    const validated = schema.validate(data, {
+        ...errorOptions?.options,
+        abortEarly: false,
+    });
     if (validated.error) {
-        throw new chaincode_error_1.ChaincodeError((errorOptions === null || errorOptions === void 0 ? void 0 : errorOptions.errorMessage) || "Invalid Data", (errorOptions === null || errorOptions === void 0 ? void 0 : errorOptions.errorStatus) || 400, validated.error.details);
+        throw new chaincode_error_1.ChaincodeError(errorOptions?.errorMessage || "Invalid Data", errorOptions?.errorStatus || 400, validated.error.details);
     }
     return validated.value;
 };
 exports.validateData = validateData;
-//# sourceMappingURL=validate-data-schema.js.map

@@ -17,3 +17,4 @@ export interface HealthcheckDTO {
     };
 }
 export declare const buildHealthcheckFromContext: (ctx: Context) => HealthcheckDTO;
+//# sourceMappingURL=healthcheck.d.ts.map

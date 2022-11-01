@@ -19,4 +19,3 @@ const buildHealthcheckFromContext = (ctx) => ({
     },
 });
 exports.buildHealthcheckFromContext = buildHealthcheckFromContext;
-//# sourceMappingURL=healthcheck.js.map

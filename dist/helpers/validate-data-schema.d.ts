@@ -6,3 +6,4 @@ declare type ErrorValidationOptions = {
 } | undefined;
 export declare const validateData: <ValidatedDTO = any>(schema: Joi.ObjectSchema<ValidatedDTO>, data: any, errorOptions?: ErrorValidationOptions) => ValidatedDTO;
 export {};
+//# sourceMappingURL=validate-data-schema.d.ts.map

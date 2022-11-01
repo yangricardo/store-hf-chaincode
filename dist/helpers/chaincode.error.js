@@ -2,11 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChaincodeError = void 0;
 class ChaincodeError {
+    name;
+    message;
+    status;
+    details;
     constructor(message, status, details = null) {
         this.message = message;
         this.status = status;
         this.details = details;
-        // console.error(this);
     }
     static fromError(error) {
         if (error instanceof ChaincodeError) {
@@ -22,4 +25,3 @@ class ChaincodeError {
     }
 }
 exports.ChaincodeError = ChaincodeError;
-//# sourceMappingURL=chaincode.error.js.map

@@ -4,3 +4,4 @@ export interface Store {
     [key: string]: any;
 }
 export declare const StoreSchema: Joi.ObjectSchema<Store>;
+//# sourceMappingURL=store.d.ts.map
