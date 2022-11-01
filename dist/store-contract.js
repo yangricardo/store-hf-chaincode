@@ -24,7 +24,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return keyStateSaved;
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
     async readStore(ctx, storeId) {
@@ -33,7 +33,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(data);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
     async updateStore(ctx, storeId, newValue) {
@@ -45,7 +45,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return keyStateSaved;
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
     async deleteStore(ctx, storeId) {
@@ -55,7 +55,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(store);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
     async getHistoryForKey(ctx, storeId) {
@@ -72,7 +72,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(events);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
     async getHistoryTransactionForKey(ctx, storeId, findTxId) {
@@ -112,7 +112,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             return (0, buffer_1.consistentStringfy)(response);
         }
         catch (error) {
-            throw chaincode_error_1.ChaincodeError.fromError(error).toString();
+            throw chaincode_error_1.ChaincodeError.fromError(error).toError();
         }
     }
 };

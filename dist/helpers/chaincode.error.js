@@ -24,5 +24,9 @@ class ChaincodeError {
     toString() {
         return (0, buffer_1.consistentStringfy)(this);
     }
+    toError() {
+        console.error(this);
+        return new Error(this.toString());
+    }
 }
 exports.ChaincodeError = ChaincodeError;

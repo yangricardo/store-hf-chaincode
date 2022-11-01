@@ -42,7 +42,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 
@@ -52,7 +52,7 @@ export class StoreContract extends Contract {
 			const data = await recoverKeyState<Store>(ctx, storeId);
 			return consistentStringfy(data);
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 
@@ -69,7 +69,7 @@ export class StoreContract extends Contract {
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 
@@ -80,7 +80,7 @@ export class StoreContract extends Contract {
 			await ctx.stub.deleteState(storeId);
 			return consistentStringfy(store);
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 
@@ -101,7 +101,7 @@ export class StoreContract extends Contract {
 			}
 			return consistentStringfy(events);
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 
@@ -148,7 +148,7 @@ export class StoreContract extends Contract {
 				throw new Error("Could not find given transaction history for key.");
 			return consistentStringfy(response);
 		} catch (error) {
-			throw ChaincodeError.fromError(error).toString();
+			throw ChaincodeError.fromError(error).toError();
 		}
 	}
 }

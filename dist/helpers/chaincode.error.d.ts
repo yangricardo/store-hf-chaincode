@@ -6,5 +6,6 @@ export declare class ChaincodeError<RawErrorType = any> {
     constructor(message: string, status: string | number, details?: any | undefined);
     static fromError(error: ChaincodeError | Error | unknown): ChaincodeError<any>;
     toString(): string;
+    toError(): Error;
 }
 //# sourceMappingURL=chaincode.error.d.ts.map

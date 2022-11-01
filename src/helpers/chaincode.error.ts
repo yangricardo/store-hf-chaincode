@@ -32,4 +32,9 @@ export class ChaincodeError<RawErrorType = any> {
 	toString() {
 		return consistentStringfy(this);
 	}
+
+	toError() {
+		console.error(this);
+		return new Error(this.toString());
+	}
 }
