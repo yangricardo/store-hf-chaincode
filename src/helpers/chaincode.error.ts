@@ -20,7 +20,9 @@ export class ChaincodeError<RawErrorType = any> {
 		error: string | ChaincodeError | Error | unknown,
 		status: string | number | undefined = 500
 	) {
-		if (error instanceof Error) {
+		if (typeof error === "string") {
+			return new ChaincodeError(error, status);
+		} else if (error instanceof Error) {
 			return new ChaincodeError(
 				error.message,
 				status,
@@ -28,8 +30,6 @@ export class ChaincodeError<RawErrorType = any> {
 			);
 		} else if (error instanceof ChaincodeError) {
 			return error;
-		} else if (typeof error === "string") {
-			return new ChaincodeError(error, status);
 		}
 		return new ChaincodeError(
 			"Unknown Error",
