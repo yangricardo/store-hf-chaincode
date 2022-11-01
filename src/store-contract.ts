@@ -148,7 +148,7 @@ export class StoreContract extends Contract {
 				throw ChaincodeError.fromError(
 					"Could not find given transaction history for key.",
 					404
-				).toError();
+				);
 			return consistentStringfy(response);
 		} catch (error) {
 			throw ChaincodeError.fromError(error).toError();
