@@ -25,16 +25,14 @@ export const requireKeyNotExists = async (ctx: Context, key: string) => {
 	}
 };
 
-export const recoverKeyState = async <T = any>(
-	ctx: Context,
-	key: string
-): Promise<T> => {
+export const recoverKeyState = async <T = any>(ctx: Context, key: string) => {
 	await requireKeyExists(ctx, key);
 	const rawState = await ctx.stub.getState(key);
-	return fromUint8Array(rawState);
+	return fromUint8Array<T>(rawState);
 };
 
 export const saveKeyState = async (ctx: Context, key: string, data: any) => {
 	const buffer: Buffer = toBuffer(data);
 	await ctx.stub.putState(key, buffer);
+	return buffer.toString("utf-8");
 };
