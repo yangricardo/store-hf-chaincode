@@ -7,7 +7,7 @@ export declare class ChaincodeError<RawErrorType = any> {
     details?: RawErrorType;
     constructor(message: string, status: string | number, details?: any | undefined);
     static fromError(error: ChaincodeError | Error | unknown): ChaincodeError<any>;
-    toString(): any;
+    toString(): string;
     toShimResponseError(): import("fabric-shim-api").ChaincodeResponse;
 }
 //# sourceMappingURL=chaincode.error.d.ts.map

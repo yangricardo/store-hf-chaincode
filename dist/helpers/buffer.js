@@ -14,7 +14,10 @@ const consistentStringfy = (data) => {
     }
 };
 exports.consistentStringfy = consistentStringfy;
-const toBuffer = (data) => Buffer.from((0, exports.consistentStringfy)(data));
+const toBuffer = (data) => {
+    const uint8Array = new TextEncoder().encode((0, exports.consistentStringfy)(data));
+    return Buffer.from(uint8Array);
+};
 exports.toBuffer = toBuffer;
 const fromUint8Array = (data) => JSON.parse(data.toString());
 exports.fromUint8Array = fromUint8Array;
