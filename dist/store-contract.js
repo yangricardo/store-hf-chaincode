@@ -42,10 +42,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             const newStore = (0, helpers_1.validateData)(store_1.StoreSchema, {
                 value: JSON.parse(newValue),
             });
-            store = (0, helpers_1.validateData)(store_1.StoreSchema, {
-                ...store.value,
-                ...newStore.value,
-            });
+            store.value = newStore.value;
             const keyStateSaved = await (0, helpers_1.saveKeyState)(ctx, storeId, store);
             return keyStateSaved;
         }

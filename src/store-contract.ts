@@ -67,10 +67,7 @@ export class StoreContract extends Contract {
 			const newStore = validateData(StoreSchema, {
 				value: JSON.parse(newValue),
 			} as Store);
-			store = validateData(StoreSchema, {
-				...store.value,
-				...newStore.value,
-			});
+			store.value = newStore.value;
 			const keyStateSaved = await saveKeyState(ctx, storeId, store);
 			return keyStateSaved;
 		} catch (error) {
