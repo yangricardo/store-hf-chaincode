@@ -10,13 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreContract = void 0;
+const buffer_1 = require("./helpers/buffer");
 const helpers_1 = require("./helpers");
 const fabric_contract_api_1 = require("fabric-contract-api");
 const store_1 = require("./store");
 const chaincode_error_1 = require("./helpers/chaincode.error");
 let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
     async healthcheck(ctx) {
-        return (0, helpers_1.buildHealthcheckFromContext)(ctx);
+        return (0, buffer_1.consistentStringfy)((0, helpers_1.buildHealthcheckFromContext)(ctx));
     }
     async storeExists(ctx, storeId) {
         return (0, helpers_1.keyHasData)(ctx, storeId);
@@ -27,8 +28,8 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             const store = (0, helpers_1.validateData)(store_1.StoreSchema, {
                 value,
             });
-            await (0, helpers_1.saveKeyState)(ctx, storeId, store);
-            return store;
+            const keyStateSaved = await (0, helpers_1.saveKeyState)(ctx, storeId, store);
+            return keyStateSaved;
         }
         catch (error) {
             throw chaincode_error_1.ChaincodeError.fromError(error);
@@ -37,7 +38,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
     async readStore(ctx, storeId) {
         try {
             const data = await (0, helpers_1.recoverKeyState)(ctx, storeId);
-            return data;
+            return (0, buffer_1.consistentStringfy)(data);
         }
         catch (error) {
             throw chaincode_error_1.ChaincodeError.fromError(error);
@@ -48,8 +49,8 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
             let store = await (0, helpers_1.recoverKeyState)(ctx, storeId);
             store.value = newValue;
             store = (0, helpers_1.validateData)(store_1.StoreSchema, store);
-            await (0, helpers_1.saveKeyState)(ctx, storeId, store);
-            return store;
+            const keyStateSaved = await (0, helpers_1.saveKeyState)(ctx, storeId, store);
+            return keyStateSaved;
         }
         catch (error) {
             throw chaincode_error_1.ChaincodeError.fromError(error);
@@ -59,7 +60,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
         try {
             const store = await (0, helpers_1.recoverKeyState)(ctx, storeId);
             await ctx.stub.deleteState(storeId);
-            return store;
+            return (0, buffer_1.consistentStringfy)(store);
         }
         catch (error) {
             throw chaincode_error_1.ChaincodeError.fromError(error);
@@ -76,7 +77,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
                 events.push({ txId, timestamp, isDelete });
                 current = await historyIterator.next();
             }
-            return events;
+            return (0, buffer_1.consistentStringfy)(events);
         }
         catch (error) {
             throw chaincode_error_1.ChaincodeError.fromError(error);
@@ -97,7 +98,7 @@ let StoreContract = class StoreContract extends fabric_contract_api_1.Contract {
                         isDelete,
                         value: parsedValue,
                     };
-                    return response;
+                    return (0, buffer_1.consistentStringfy)(response);
                 }
                 current = await historyIterator.next();
             }

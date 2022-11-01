@@ -35,6 +35,7 @@ exports.recoverKeyState = recoverKeyState;
 const saveKeyState = async (ctx, key, data) => {
     const buffer = (0, buffer_1.toBuffer)(data);
     await ctx.stub.putState(key, buffer);
+    return buffer.toString("utf-8");
 };
 exports.saveKeyState = saveKeyState;
 //# sourceMappingURL=key-state.js.map
