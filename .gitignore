@@ -79,3 +79,6 @@ typings/
 # Lock
 package-lock.json
 yarn.lock
+
+# Compiled TypeScript files
+dist
