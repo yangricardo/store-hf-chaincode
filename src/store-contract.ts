@@ -63,7 +63,7 @@ export class StoreContract extends Contract {
 		newValue: string
 	): Promise<string> {
 		try {
-			let store = await recoverKeyState<Store>(ctx, storeId);
+			const store = await recoverKeyState<Store>(ctx, storeId);
 			const newStore = validateData(StoreSchema, {
 				value: JSON.parse(newValue),
 			} as Store);
@@ -129,7 +129,7 @@ export class StoreContract extends Contract {
 				} catch (error) {
 					payload = value.toString();
 				}
-				let currentHistory = {
+				const currentHistory = {
 					txId,
 					timestamp,
 					isDelete,

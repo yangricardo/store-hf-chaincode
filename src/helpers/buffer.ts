@@ -1,4 +1,4 @@
-const stringify = require("json-stringify-deterministic");
+import stringify from "json-stringify-deterministic";
 import sortKeysRecursive from "sort-keys-recursive";
 
 export const consistentStringfy = (data: any): string => {
