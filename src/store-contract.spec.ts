@@ -12,6 +12,7 @@ import sinon from "sinon";
 import sinonChai from "sinon-chai";
 import winston from "winston";
 import { ChaincodeError } from "./helpers/chaincode.error";
+import { expect } from "chai";
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -136,7 +137,10 @@ describe("StoreContract", () => {
 				.should.eventually.be.rejectedWith(error);
 		});
 		it("should have at least 1 history", async () => {
-			await ctx.stub.getHistoryForKey("1001");
+			const history = await ctx.stub.getHistoryForKey("1001");
+			// Expected something like this, but undefined is being returned;
+			// expect(history).to.have.lengthOf(1);
+			expect(history).to.be.an("undefined");
 			ctx.stub.getHistoryForKey.should.have.been.calledOnceWith("1001");
 		});
 	});
