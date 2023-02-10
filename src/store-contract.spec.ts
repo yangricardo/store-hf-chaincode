@@ -6,11 +6,11 @@ import { Context } from "fabric-contract-api";
 import { ChaincodeStub, ClientIdentity } from "fabric-shim";
 import { StoreContract } from ".";
 
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as sinon from "sinon";
-import * as sinonChai from "sinon-chai";
-import * as winston from "winston";
+import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
+import sinon from "sinon";
+import sinonChai from "sinon-chai";
+import winston from "winston";
 import { ChaincodeError } from "./helpers/chaincode.error";
 
 chai.should();
